@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,9 +12,10 @@ if (!uri) {
 }
 
 const client = new MongoClient(uri);
+app.use(express.json()); // Middleware to parse JSON requests
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the MongoDB to Sheets API! Use /data to fetch data.");
+  res.send("Welcome to the MongoDB API! Use /data to fetch data.");
 });
 
 app.get("/data", async (req, res) => {
@@ -23,25 +24,46 @@ app.get("/data", async (req, res) => {
     const database = client.db("test"); // Use your correct database name
     const collection = database.collection("studentschemas"); // Use your correct collection name
 
-    // Fetch the data from MongoDB
     const rawData = await collection.find({}).toArray();
 
-    // Flatten the data and remove the _id field or convert it to a string
-    const formattedData = rawData.map(item => {
-      return {
-        id: item._id.toString(),  // Convert _id to string for easier handling
-        ...item,                  // Spread other properties into the result
-      };
-    });
+    // Format the data (Convert `_id` to `id` and remove `_id`)
+    const formattedData = rawData.map(item => ({
+      id: item._id.toString(),
+      ...item,
+    }));
 
-    // Optionally remove the original _id key if it's no longer needed
     formattedData.forEach(item => delete item._id);
 
-    // Send the cleaned, flattened data as JSON response
     res.json(formattedData);
   } catch (err) {
     console.error("Error fetching data from MongoDB:", err);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.post("/verify", async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db("test");
+    const collection = database.collection("studentschemas");
+
+    const { id } = req.body; // Get ID from request body
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
+    // Check if the student exists
+    const student = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!student) {
+      return res.status(404).json({ message: "Invalid" });
+    }
+
+    res.json({ message: "Valid"});
+  } catch (error) {
+    console.error("Error verifying student:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
