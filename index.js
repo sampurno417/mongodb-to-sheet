@@ -15,7 +15,7 @@ const client = new MongoClient(uri);
 app.use(express.json()); // Middleware to parse JSON requests
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the MongoDB API! Use /data to fetch data.");
+  res.send("Welcome to the MongoDB API! Use /verify to check.");
 });
 
 app.get("/data", async (req, res) => {
