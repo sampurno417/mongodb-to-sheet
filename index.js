@@ -67,6 +67,43 @@ app.post("/verify", async (req, res) => {
   }
 });
 
+
+app.patch("/turnin", async (req, res) => {
+  try {
+    await client.connect();
+    const database = client.db("test");
+    const collection = database.collection("studentschemas");
+
+    const { id } = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
+    // Find student by ID
+    const student = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!student) {
+      return res.status(404).json({ message: "Sorry! Invalid ID." });
+    }
+
+    if (student.isVerified === false) {
+      // Update student verification status
+      await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { isVerified: true } }
+      );
+
+      return res.json({ message: "Registerd" });
+    } else {
+      return res.json({ message: "Sorry! Already registerd." });
+    }
+  } catch (error) {
+    console.error("Error in /turnin:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // Default port listener (for local dev/testing)
 if (process.env.NODE_ENV !== "production") {
   app.listen(port, () => {
