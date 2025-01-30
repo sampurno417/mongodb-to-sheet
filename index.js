@@ -94,15 +94,38 @@ app.patch("/turnin", async (req, res) => {
         { $set: { isVerified: true } }
       );
 
-      return res.json({ message: "Participant Registerd successfully" });
+      // Fetch the updated student data
+      const updatedStudent = await collection.findOne({ _id: new ObjectId(id) });
+
+      // Include participant details in the response
+      return res.json({
+        message: "Participant Registered successfully",
+        // participant: {
+          name: updatedStudent.name,
+          roll: updatedStudent.roll,
+          department: updatedStudent.department,
+          year: updatedStudent.year,
+          college: updatedStudent.college,
+        // },
+      });
     } else {
-      return res.json({ message: "Student Already Registerd" });
+      return res.json({
+        message: "Student Already Registered",
+        // participant: {
+          name: student.name,
+          roll: student.roll,
+          department: student.department,
+          year: student.year,
+          college: student.college,
+        // },
+      });
     }
   } catch (error) {
     console.error("Error in /turnin:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // Default port listener (for local dev/testing)
 if (process.env.NODE_ENV !== "production") {
