@@ -94,9 +94,9 @@ app.patch("/turnin", async (req, res) => {
         { $set: { isVerified: true } }
       );
 
-      return res.json({ message: "Registerd" });
+      return res.json({ message: "Participant Registerd successfully" });
     } else {
-      return res.json({ message: "Sorry! Already registerd." });
+      return res.json({ message: "Student Already Registerd" });
     }
   } catch (error) {
     console.error("Error in /turnin:", error);
