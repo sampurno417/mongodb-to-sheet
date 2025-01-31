@@ -22,7 +22,7 @@ app.get("/data", async (req, res) => {
   try {
     await client.connect();
     const database = client.db("test"); // Use your correct database name
-    const collection = database.collection("studentschemas"); // Use your correct collection name
+    const collection = database.collection("sristipirates"); // Use your correct collection name
 
     const rawData = await collection.find({}).toArray();
 
@@ -45,7 +45,7 @@ app.post("/verify", async (req, res) => {
   try {
     await client.connect();
     const database = client.db("test");
-    const collection = database.collection("studentschemas");
+    const collection = database.collection("sristipirates");
 
     const { id } = req.body; // Get ID from request body
 
@@ -72,7 +72,7 @@ app.patch("/turnin", async (req, res) => {
   try {
     await client.connect();
     const database = client.db("test");
-    const collection = database.collection("studentschemas");
+    const collection = database.collection("sristipirates");
 
     const { id } = req.body;
 
