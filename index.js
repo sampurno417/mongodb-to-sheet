@@ -111,8 +111,9 @@ app.patch("/turnin", async (req, res) => {
         message: "Student Already Registered",
         // participant: {
           name: student.name,
-           paperId: updatedStudent.paperId,
-          paymentId: updatedStudent.paymentId,
+          paperId: student.paperId,
+          paymentId: student.paymentId,
+         
         // },
       });
     }
