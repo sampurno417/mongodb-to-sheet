@@ -102,10 +102,8 @@ app.patch("/turnin", async (req, res) => {
         message: "Participant Registered successfully",
         // participant: {
           name: updatedStudent.name,
-          roll: updatedStudent.roll,
-          department: updatedStudent.department,
-          year: updatedStudent.year,
-          college: updatedStudent.college,
+          paperId: updatedStudent.paperId,
+          paymentId: updatedStudent.paymentId,
         // },
       });
     } else {
